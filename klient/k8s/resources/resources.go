@@ -19,8 +19,9 @@ package resources
 import (
 	"context"
 	"errors"
-	"log"
 	"time"
+
+	log "k8s.io/klog/v2"
 
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/rest"
@@ -52,14 +53,14 @@ type Resources struct {
 func New(cfg *rest.Config) (*Resources, error) {
 	if cfg == nil {
 		// TODO: logging
-		log.Println("must provide rest.Config")
+		log.Info("must provide rest.Config")
 		return nil, errors.New("must provide rest.Config")
 	}
 
 	cl, err := cr.New(cfg, cr.Options{Scheme: scheme.Scheme})
 	if err != nil {
 		// TODO: log error
-		log.Println("unexpected error creating client using provided config and client options", err)
+		log.Info("unexpected error creating client using provided config and client options", err)
 		return nil, err
 	}
 
