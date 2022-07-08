@@ -20,11 +20,10 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"sigs.k8s.io/e2e-framework/pkg/klient/resources"
 	"strings"
 	"testing"
 
-	"sigs.k8s.io/e2e-framework/klient/decoder"
-	"sigs.k8s.io/e2e-framework/klient/k8s/resources"
 	"sigs.k8s.io/e2e-framework/pkg/env"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 	"sigs.k8s.io/e2e-framework/pkg/envfuncs"
@@ -62,7 +61,7 @@ func TestMain(m *testing.M) {
 				return ctx, err
 			}
 			// decode and create a stream of YAML or JSON documents from an io.Reader
-			decoder.DecodeEach(ctx, strings.NewReader(initYAML), decoder.CreateHandler(r))
+			resources.DecodeEach(ctx, strings.NewReader(initYAML), resources.CreateHandler(r))
 			return ctx, nil
 		},
 	)

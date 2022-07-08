@@ -18,9 +18,8 @@ package envfuncs
 
 import (
 	"context"
+	"sigs.k8s.io/e2e-framework/pkg/klient/resources"
 
-	"sigs.k8s.io/e2e-framework/klient/decoder"
-	"sigs.k8s.io/e2e-framework/klient/k8s/resources"
 	"sigs.k8s.io/e2e-framework/pkg/env"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 )
@@ -34,7 +33,7 @@ func SetupCRDs(crdPath, pattern string) env.Func {
 		if err != nil {
 			return ctx, err
 		}
-		return ctx, decoder.ApplyWithManifestDir(ctx, r, crdPath, pattern, []resources.CreateOption{})
+		return ctx, resources.ApplyWithManifestDir(ctx, r, crdPath, pattern, []resources.CreateOption{})
 	}
 }
 
@@ -46,6 +45,6 @@ func TeardownCRDs(crdPath, pattern string) env.Func {
 		if err != nil {
 			return ctx, err
 		}
-		return ctx, decoder.DeleteWithManifestDir(ctx, r, crdPath, pattern, []resources.DeleteOption{})
+		return ctx, resources.DeleteWithManifestDir(ctx, r, crdPath, pattern, []resources.DeleteOption{})
 	}
 }

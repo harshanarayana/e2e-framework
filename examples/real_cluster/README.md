@@ -44,7 +44,7 @@ package e2e
 import (
 	_ "k8s.io/client-go/plugin/pkg/client/auth/azure"
 	"os"
-	"sigs.k8s.io/e2e-framework/klient/conf"
+	"sigs.k8s.io/e2e-framework/pkg/klient/conf"
 	"sigs.k8s.io/e2e-framework/pkg/env"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 	"sigs.k8s.io/e2e-framework/pkg/envfuncs"

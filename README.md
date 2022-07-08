@@ -22,7 +22,7 @@ The Go package is designed to be integrated directly in your test. Simply update
 
 ```
 go get sigs.k8s.io/e2e-framework/pkg/env
-go get sigs.k8s.io/e2e-framework/klient
+go get sigs.k8s.io/e2e-framework/pkg/klient
 ```
 
 ### Using the framework

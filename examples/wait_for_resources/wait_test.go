@@ -18,6 +18,9 @@ package wait_for_resources
 
 import (
 	"context"
+	"sigs.k8s.io/e2e-framework/pkg/klient/resources"
+	"sigs.k8s.io/e2e-framework/pkg/klient/resources/conditions"
+	"sigs.k8s.io/e2e-framework/pkg/klient/types"
 	"testing"
 	"time"
 
@@ -25,12 +28,9 @@ import (
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
-	"sigs.k8s.io/e2e-framework/klient/k8s"
-	"sigs.k8s.io/e2e-framework/klient/k8s/resources"
-	"sigs.k8s.io/e2e-framework/klient/wait"
-	"sigs.k8s.io/e2e-framework/klient/wait/conditions"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 	"sigs.k8s.io/e2e-framework/pkg/features"
+	"sigs.k8s.io/e2e-framework/pkg/klient/wait"
 )
 
 func TestWaitForResources(t *testing.T) {
@@ -56,7 +56,7 @@ func TestWaitForResources(t *testing.T) {
 				ObjectMeta: metav1.ObjectMeta{Name: "test-deployment", Namespace: cfg.Namespace()},
 			}
 			// wait for the deployment to become at least 50%
-			err = wait.For(conditions.New(client.Resources()).ResourceMatch(&dep, func(object k8s.Object) bool {
+			err = wait.For(conditions.New(client.Resources()).ResourceMatch(&dep, func(object types.Object) bool {
 				d := object.(*appsv1.Deployment)
 				return float64(d.Status.ReadyReplicas)/float64(*d.Spec.Replicas) >= 0.50
 			}), wait.WithTimeout(time.Minute*1))

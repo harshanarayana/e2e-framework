@@ -19,16 +19,15 @@ package envfuncs
 import (
 	"context"
 	"fmt"
-
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"sigs.k8s.io/e2e-framework/klient"
-	"sigs.k8s.io/e2e-framework/klient/k8s/resources"
-	"sigs.k8s.io/e2e-framework/klient/wait"
-	"sigs.k8s.io/e2e-framework/klient/wait/conditions"
 	"sigs.k8s.io/e2e-framework/pkg/env"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
-	"sigs.k8s.io/e2e-framework/support/kind"
+	"sigs.k8s.io/e2e-framework/pkg/framework"
+	"sigs.k8s.io/e2e-framework/pkg/framework/types"
+	"sigs.k8s.io/e2e-framework/pkg/klient/resources"
+	"sigs.k8s.io/e2e-framework/pkg/klient/resources/conditions"
+	"sigs.k8s.io/e2e-framework/pkg/klient/wait"
 )
 
 type kindContextKey string
@@ -42,8 +41,8 @@ type kindContextKey string
 //
 func CreateKindCluster(clusterName string) env.Func {
 	return func(ctx context.Context, cfg *envconf.Config) (context.Context, error) {
-		k := kind.NewCluster(clusterName)
-		kubecfg, err := k.Create()
+		k := framework.GetProviderGenerator("kind")()
+		kubecfg, err := k.Create(framework.WithName(clusterName))
 		if err != nil {
 			return ctx, err
 		}
@@ -70,8 +69,8 @@ func CreateKindCluster(clusterName string) env.Func {
 //
 func CreateKindClusterWithConfig(clusterName, image, configFilePath string) env.Func {
 	return func(ctx context.Context, cfg *envconf.Config) (context.Context, error) {
-		k := kind.NewCluster(clusterName)
-		kubecfg, err := k.CreateWithConfig(image, configFilePath)
+		k := framework.GetProviderGenerator("kind")()
+		kubecfg, err := k.Create(framework.WithArgs("--image", image), framework.WithInitConfig(configFilePath))
 		if err != nil {
 			return ctx, err
 		}
@@ -89,7 +88,7 @@ func CreateKindClusterWithConfig(clusterName, image, configFilePath string) env.
 	}
 }
 
-func waitForControlPlane(client klient.Client) error {
+func waitForControlPlane(client resources.Client) error {
 	r, err := resources.New(client.RESTConfig())
 	if err != nil {
 		return err
@@ -139,7 +138,7 @@ func DestroyKindCluster(name string) env.Func {
 			return ctx, fmt.Errorf("destroy kind cluster func: context cluster is nil")
 		}
 
-		cluster, ok := clusterVal.(*kind.Cluster)
+		cluster, ok := clusterVal.(types.ClusterProvider)
 		if !ok {
 			return ctx, fmt.Errorf("destroy kind cluster func: unexpected type for cluster value")
 		}
@@ -163,12 +162,12 @@ func LoadDockerImageToCluster(name, image string) env.Func {
 			return ctx, fmt.Errorf("load docker image func: context cluster is nil")
 		}
 
-		cluster, ok := clusterVal.(*kind.Cluster)
+		cluster, ok := clusterVal.(types.ClusterProvider)
 		if !ok {
 			return ctx, fmt.Errorf("load docker image func: unexpected type for cluster value")
 		}
 
-		if err := cluster.LoadDockerImage(image); err != nil {
+		if err := cluster.LoadImage(image); err != nil {
 			return ctx, fmt.Errorf("load docker image: %w", err)
 		}
 
@@ -187,7 +186,7 @@ func LoadImageArchiveToCluster(name, imageArchive string) env.Func {
 			return ctx, fmt.Errorf("load image archive func: context cluster is nil")
 		}
 
-		cluster, ok := clusterVal.(*kind.Cluster)
+		cluster, ok := clusterVal.(types.ClusterProvider)
 		if !ok {
 			return ctx, fmt.Errorf("load image archive func: unexpected type for cluster value")
 		}

@@ -19,19 +19,19 @@ package parallel_features
 import (
 	"context"
 	"os"
+	"sigs.k8s.io/e2e-framework/pkg/klient/resources/conditions"
+	"sigs.k8s.io/e2e-framework/pkg/klient/types"
 	"testing"
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	"sigs.k8s.io/e2e-framework/klient/k8s"
-	"sigs.k8s.io/e2e-framework/klient/wait"
-	"sigs.k8s.io/e2e-framework/klient/wait/conditions"
 	"sigs.k8s.io/e2e-framework/pkg/env"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 	"sigs.k8s.io/e2e-framework/pkg/envfuncs"
 	"sigs.k8s.io/e2e-framework/pkg/features"
+	"sigs.k8s.io/e2e-framework/pkg/klient/wait"
 )
 
 var (
@@ -88,7 +88,7 @@ func TestPodBringUp(t *testing.T) {
 		}).
 		Assess("Wait for Nginx Deployment 1 to be scaled up", func(ctx context.Context, t *testing.T, config *envconf.Config) context.Context {
 			deployment := ctx.Value("DEPLOYMENT").(*appsv1.Deployment)
-			err := wait.For(conditions.New(config.Client().Resources()).ResourceScaled(deployment, func(object k8s.Object) int32 {
+			err := wait.For(conditions.New(config.Client().Resources()).ResourceScaled(deployment, func(object types.Object) int32 {
 				return object.(*appsv1.Deployment).Status.ReadyReplicas
 			}, 2))
 			if err != nil {
@@ -109,7 +109,7 @@ func TestPodBringUp(t *testing.T) {
 		}).
 		Assess("Wait for Nginx Deployment 2 to be scaled up", func(ctx context.Context, t *testing.T, config *envconf.Config) context.Context {
 			deployment := ctx.Value("DEPLOYMENT").(*appsv1.Deployment)
-			err := wait.For(conditions.New(config.Client().Resources()).ResourceScaled(deployment, func(object k8s.Object) int32 {
+			err := wait.For(conditions.New(config.Client().Resources()).ResourceScaled(deployment, func(object types.Object) int32 {
 				return object.(*appsv1.Deployment).Status.ReadyReplicas
 			}, 2))
 			if err != nil {

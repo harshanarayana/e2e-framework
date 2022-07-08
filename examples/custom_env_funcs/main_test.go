@@ -19,12 +19,13 @@ package custom_env_funcs
 import (
 	"context"
 	"os"
+	"sigs.k8s.io/e2e-framework/pkg/framework"
+	"sigs.k8s.io/e2e-framework/pkg/framework/types"
 	"testing"
 	"time"
 
 	"sigs.k8s.io/e2e-framework/pkg/env"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
-	"sigs.k8s.io/e2e-framework/support/kind"
 )
 
 var testenv env.Environment
@@ -35,8 +36,8 @@ func TestMain(m *testing.M) {
 		// Step: creates kind cluster, propagate kind cluster object
 		func(ctx context.Context, cfg *envconf.Config) (context.Context, error) {
 			name := envconf.RandomName("my-cluster", 16)
-			cluster := kind.NewCluster(name)
-			kubeconfig, err := cluster.Create()
+			cluster := framework.GetProviderGenerator("kind")()
+			kubeconfig, err := cluster.Create(framework.WithName(name))
 			if err != nil {
 				return ctx, err
 			}
@@ -51,7 +52,7 @@ func TestMain(m *testing.M) {
 	).Finish(
 		// Teardown func: delete kind cluster
 		func(ctx context.Context, cfg *envconf.Config) (context.Context, error) {
-			cluster := ctx.Value(1).(*kind.Cluster) // nil should be tested
+			cluster := ctx.Value(1).(types.ClusterProvider) // nil should be tested
 			if err := cluster.Destroy(); err != nil {
 				return ctx, err
 			}

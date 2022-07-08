@@ -21,17 +21,16 @@ import (
 	"fmt"
 	"math/rand"
 	"regexp"
+	"sigs.k8s.io/e2e-framework/pkg/framework"
+	"sigs.k8s.io/e2e-framework/pkg/klient/resources"
 	"time"
 
 	log "k8s.io/klog/v2"
-
-	"sigs.k8s.io/e2e-framework/klient"
-	"sigs.k8s.io/e2e-framework/pkg/flags"
 )
 
 // Config represents and environment configuration
 type Config struct {
-	client                  klient.Client
+	client                  resources.Client
 	kubeconfig              string
 	namespace               string
 	assessmentRegex         *regexp.Regexp
@@ -60,7 +59,7 @@ func NewWithKubeConfig(kubeconfig string) *Config {
 // NewFromFlags initializes an environment config using flag values
 // parsed from command-line arguments and returns an error on parsing failure.
 func NewFromFlags() (*Config, error) {
-	envFlags, err := flags.Parse()
+	envFlags, err := framework.Parse()
 	if err != nil {
 		log.Fatalf("flags parse failed: %s", err)
 	}
@@ -100,7 +99,7 @@ func (c *Config) KubeconfigFile() string {
 }
 
 // WithClient used to update the environment klient.Client
-func (c *Config) WithClient(client klient.Client) *Config {
+func (c *Config) WithClient(client resources.Client) *Config {
 	c.client = client
 	return c
 }
@@ -108,12 +107,12 @@ func (c *Config) WithClient(client klient.Client) *Config {
 // NewClient is a constructor function that returns a previously
 // created klient.Client or create a new one based on configuration
 // previously set. Will return an error if unable to do so.
-func (c *Config) NewClient() (klient.Client, error) {
+func (c *Config) NewClient() (resources.Client, error) {
 	if c.client != nil {
 		return c.client, nil
 	}
 
-	client, err := klient.NewWithKubeConfigFile(c.kubeconfig)
+	client, err := resources.NewClientWithKubeConfigFile(c.kubeconfig)
 	if err != nil {
 		return nil, fmt.Errorf("envconfig: client failed: %w", err)
 	}
@@ -127,12 +126,12 @@ func (c *Config) NewClient() (klient.Client, error) {
 // previously set. Will panic on any error so it is recommended that you
 // are confident in the configuration or call NewClient() to ensure its
 // safe creation.
-func (c *Config) Client() klient.Client {
+func (c *Config) Client() resources.Client {
 	if c.client != nil {
 		return c.client
 	}
 
-	client, err := klient.NewWithKubeConfigFile(c.kubeconfig)
+	client, err := resources.NewClientWithKubeConfigFile(c.kubeconfig)
 	if err != nil {
 		panic(fmt.Errorf("envconfig: client failed: %w", err).Error())
 	}

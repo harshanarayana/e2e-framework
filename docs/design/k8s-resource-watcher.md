@@ -116,8 +116,8 @@ This example shows how to use klient/resources/resources.go Watch() func and how
 ```go=
 
 import (
-    "sigs.k8s.io/e2e-framework/klient/conf"
-    "sigs.k8s.io/e2e-framework/klient/k8s/resources"
+    "sigs.k8s.io/e2e-framework/pkg/klient/conf"
+    "sigs.k8s.io/e2e-framework/pkg/klient/k8s/resources"
 )
 
 func main() {

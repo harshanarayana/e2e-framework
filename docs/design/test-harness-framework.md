@@ -224,7 +224,7 @@ The starting point for an E2E test is a Go TestMain function which can launch al
 ```go
 import (
     "sigs.k8s.io/e2e-framework/pkg/env"
-    conf "sigs.k8s.io/e2e-framework/klient/conf"
+    conf "sigs.k8s.io/e2e-framework/pkg/klient/conf"
 )
 
 var (

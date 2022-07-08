@@ -32,6 +32,8 @@ import (
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 	"sigs.k8s.io/e2e-framework/pkg/features"
 	"sigs.k8s.io/e2e-framework/pkg/internal/types"
+
+	_ "sigs.k8s.io/e2e-framework/pkg/framework/providers"
 )
 
 type (

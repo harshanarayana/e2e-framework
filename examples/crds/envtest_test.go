@@ -19,12 +19,11 @@ package crds
 import (
 	"context"
 	"os"
+	"sigs.k8s.io/e2e-framework/pkg/klient/resources"
 	"testing"
 
 	"k8s.io/klog/v2"
 	"sigs.k8s.io/e2e-framework/examples/crds/testdata/crontabs"
-	"sigs.k8s.io/e2e-framework/klient/decoder"
-	"sigs.k8s.io/e2e-framework/klient/k8s/resources"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 	"sigs.k8s.io/e2e-framework/pkg/features"
 )
@@ -38,10 +37,10 @@ func TestCRDSetup(t *testing.T) {
 			}
 			crontabs.AddToScheme(r.GetScheme())
 			r.WithNamespace(namespace)
-			decoder.DecodeEachFile(
+			resources.DecodeEachFile(
 				ctx, os.DirFS("./testdata/crs"), "*",
-				decoder.CreateHandler(r),
-				decoder.MutateNamespace(namespace),
+				resources.CreateHandler(r),
+				resources.MutateNamespace(namespace),
 			)
 			return ctx
 		}).

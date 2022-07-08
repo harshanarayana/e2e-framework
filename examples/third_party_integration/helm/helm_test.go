@@ -20,17 +20,17 @@ import (
 	"context"
 	"os"
 	"path/filepath"
+	"sigs.k8s.io/e2e-framework/pkg/external"
+	"sigs.k8s.io/e2e-framework/pkg/klient/resources/conditions"
+	"sigs.k8s.io/e2e-framework/pkg/klient/types"
 	"testing"
 
 	appsv1 "k8s.io/api/apps/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	"sigs.k8s.io/e2e-framework/klient/k8s"
-	"sigs.k8s.io/e2e-framework/klient/wait"
-	"sigs.k8s.io/e2e-framework/klient/wait/conditions"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 	"sigs.k8s.io/e2e-framework/pkg/features"
-	"sigs.k8s.io/e2e-framework/third_party/helm"
+	"sigs.k8s.io/e2e-framework/pkg/klient/wait"
 )
 
 var curDir, _ = os.Getwd()
@@ -38,16 +38,16 @@ var curDir, _ = os.Getwd()
 func TestHelmChartRepoWorkflow(t *testing.T) {
 	feature := features.New("Repo based helm chart workflow").
 		Setup(func(ctx context.Context, t *testing.T, config *envconf.Config) context.Context {
-			manager := helm.New(config.KubeconfigFile())
-			err := manager.RunRepo(helm.WithArgs("add", "nginx-stable", "https://helm.nginx.com/stable"))
+			manager := external.NewHelmManager(config.KubeconfigFile())
+			err := manager.RunRepo(external.WithArgs("add", "nginx-stable", "https://helm.nginx.com/stable"))
 			if err != nil {
 				t.Fatal("failed to add nginx helm chart repo")
 			}
-			err = manager.RunRepo(helm.WithArgs("update"))
+			err = manager.RunRepo(external.WithArgs("update"))
 			if err != nil {
 				t.Fatal("failed to upgrade helm repo")
 			}
-			err = manager.RunInstall(helm.WithName("nginx"), helm.WithNamespace(namespace), helm.WithReleaseName("nginx-stable/nginx-ingress"))
+			err = manager.RunInstall(external.WithName("nginx"), external.WithNamespace(namespace), external.WithReleaseName("nginx-stable/nginx-ingress"))
 			if err != nil {
 				t.Fatal("failed to install nginx Helm chart")
 			}
@@ -61,7 +61,7 @@ func TestHelmChartRepoWorkflow(t *testing.T) {
 				},
 				Spec: appsv1.DeploymentSpec{},
 			}
-			err := wait.For(conditions.New(config.Client().Resources()).ResourceScaled(deployment, func(object k8s.Object) int32 {
+			err := wait.For(conditions.New(config.Client().Resources()).ResourceScaled(deployment, func(object types.Object) int32 {
 				return object.(*appsv1.Deployment).Status.ReadyReplicas
 			}, 1))
 			if err != nil {
@@ -70,16 +70,16 @@ func TestHelmChartRepoWorkflow(t *testing.T) {
 			return ctx
 		}).
 		Assess("run Chart Tests", func(ctx context.Context, t *testing.T, config *envconf.Config) context.Context {
-			manager := helm.New(config.KubeconfigFile())
-			err := manager.RunTest(helm.WithArgs("nginx"), helm.WithNamespace(namespace))
+			manager := external.NewHelmManager(config.KubeconfigFile())
+			err := manager.RunTest(external.WithArgs("nginx"), external.WithNamespace(namespace))
 			if err != nil {
 				t.Fatal("failed waiting for the Deployment to reach a ready state")
 			}
 			return ctx
 		}).
 		Teardown(func(ctx context.Context, t *testing.T, config *envconf.Config) context.Context {
-			manager := helm.New(config.KubeconfigFile())
-			err := manager.RunRepo(helm.WithArgs("remove", "nginx-stable"))
+			manager := external.NewHelmManager(config.KubeconfigFile())
+			err := manager.RunRepo(external.WithArgs("remove", "nginx-stable"))
 			if err != nil {
 				t.Fatal("cleanup of the helm repo failed")
 			}
@@ -92,8 +92,8 @@ func TestHelmChartRepoWorkflow(t *testing.T) {
 func TestLocalHelmChartWorkflow(t *testing.T) {
 	feature := features.New("Local Helm chart workflow").
 		Setup(func(ctx context.Context, t *testing.T, config *envconf.Config) context.Context {
-			manager := helm.New(config.KubeconfigFile())
-			err := manager.RunInstall(helm.WithName("example"), helm.WithNamespace(namespace), helm.WithChart(filepath.Join(curDir, "testdata", "example_chart")), helm.WithWait(), helm.WithTimeout("10m"))
+			manager := external.NewHelmManager(config.KubeconfigFile())
+			err := manager.RunInstall(external.WithName("example"), external.WithNamespace(namespace), external.WithChart(filepath.Join(curDir, "testdata", "example_chart")), external.WithWait(), external.WithTimeout("10m"))
 			if err != nil {
 				t.Fatal("failed to invoke helm install operation due to an error", err)
 			}
@@ -107,7 +107,7 @@ func TestLocalHelmChartWorkflow(t *testing.T) {
 				},
 				Spec: appsv1.DeploymentSpec{},
 			}
-			err := wait.For(conditions.New(config.Client().Resources()).ResourceScaled(deployment, func(object k8s.Object) int32 {
+			err := wait.For(conditions.New(config.Client().Resources()).ResourceScaled(deployment, func(object types.Object) int32 {
 				return object.(*appsv1.Deployment).Status.ReadyReplicas
 			}, 1))
 			if err != nil {
@@ -116,8 +116,8 @@ func TestLocalHelmChartWorkflow(t *testing.T) {
 			return ctx
 		}).
 		Assess("run Helm Test Workflow", func(ctx context.Context, t *testing.T, config *envconf.Config) context.Context {
-			manager := helm.New(config.KubeconfigFile())
-			err := manager.RunTest(helm.WithName("example"), helm.WithNamespace(namespace))
+			manager := external.NewHelmManager(config.KubeconfigFile())
+			err := manager.RunTest(external.WithName("example"), external.WithNamespace(namespace))
 			if err != nil {
 				t.Fatal("failed to perform helm test operation to check if the chart deployment is good")
 			}

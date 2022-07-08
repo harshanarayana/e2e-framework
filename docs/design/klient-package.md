@@ -200,8 +200,8 @@ func New(cfg *rest.Config) *Resources {...}
 #### Example - creating a resource
 ```go
 import (
-    "sigs.k8s.io/e2e-framework/klient/conf"
-    "sigs.k8s.io/e2e-framework/klient/k8s/resources"
+    "sigs.k8s.io/e2e-framework/pkg/klient/conf"
+    "sigs.k8s.io/e2e-framework/pkg/klient/k8s/resources"
 )
 func main() {
     cfg, err := conf.New(conf.ResolveKubeConfigFile())
@@ -248,8 +248,8 @@ namespace `"default"` or `"net-svc"`.
 
 ```go
 import (
-    "sigs.k8s.io/e2e-framework/klient/conf"
-    "sigs.k8s.io/e2e-framework/klient/k8s/resources"
+    "sigs.k8s.io/e2e-framework/pkg/klient/conf"
+    "sigs.k8s.io/e2e-framework/pkg/klient/k8s/resources"
 )
 
 func main() {
@@ -279,8 +279,8 @@ func (c *Resources) Get(ctx context.Context, name, namespace string, obj k8s.Obj
 #### Example
 ```go
 import (
-    "sigs.k8s.io/e2e-framework/klient/conf"
-    "sigs.k8s.io/e2e-framework/klient/k8s/resources"
+    "sigs.k8s.io/e2e-framework/pkg/klient/conf"
+    "sigs.k8s.io/e2e-framework/pkg/klient/k8s/resources"
 )
 
 func main() {
@@ -314,8 +314,8 @@ func (c *Resources) List(ctx context.Context, namespace string, objs k8s.ObjectL
 
 ```go
 import (
-    "sigs.k8s.io/e2e-framework/klient/conf"
-    "sigs.k8s.io/e2e-framework/klient/k8s/resources"
+    "sigs.k8s.io/e2e-framework/pkg/klient/conf"
+    "sigs.k8s.io/e2e-framework/pkg/klient/k8s/resources"
 )
 
 func main() {
@@ -363,8 +363,8 @@ func (c *Resources) Create(ctx context.Context, obj k8s.Object, opts...k8s.Creat
 
 ```go
 import (
-    "sigs.k8s.io/e2e-framework/klient/conf"
-    "sigs.k8s.io/e2e-framework/klient/k8s/resources"
+    "sigs.k8s.io/e2e-framework/pkg/klient/conf"
+    "sigs.k8s.io/e2e-framework/pkg/klient/k8s/resources"
 )
 
 func main() {
@@ -424,8 +424,8 @@ func (c *Resources) Update(ctx context.Context, obj Object, opts...UpdateOption)
 
 ```go
 import (
-    "sigs.k8s.io/e2e-framework/klient/conf"
-    "sigs.k8s.io/e2e-framework/klient/k8s/resources"
+    "sigs.k8s.io/e2e-framework/pkg/klient/conf"
+    "sigs.k8s.io/e2e-framework/pkg/klient/k8s/resources"
 )
 
 func main() {
@@ -469,8 +469,8 @@ func (c *Resources) Delete(ctx context.Context, obj Object, opts...UpdateOption)
 
 ```go
 import (
-    "sigs.k8s.io/e2e-framework/klient/conf"
-    "sigs.k8s.io/e2e-framework/klient/k8s/resources"
+    "sigs.k8s.io/e2e-framework/pkg/klient/conf"
+    "sigs.k8s.io/e2e-framework/pkg/klient/k8s/resources"
 )
 
 func main() {
@@ -521,8 +521,8 @@ func (c *Resources) Patch(ctx context.Context, orig Object, patch Object, opts..
 
 ```go
 import (
-    "sigs.k8s.io/e2e-framework/klient/conf"
-    "sigs.k8s.io/e2e-framework/klient/k8s/resources"
+    "sigs.k8s.io/e2e-framework/pkg/klient/conf"
+    "sigs.k8s.io/e2e-framework/pkg/klient/k8s/resources"
 )
 
 func main() {
@@ -570,8 +570,8 @@ func (r *Resources) BuildFromJSON(ctx context.Context, obj kclient.Object, json 
 
 ```go
 import (
-    "sigs.k8s.io/e2e-framework/klient/conf"
-    "sigs.k8s.io/e2e-framework/klient/k8s/resources"
+    "sigs.k8s.io/e2e-framework/pkg/klient/conf"
+    "sigs.k8s.io/e2e-framework/pkg/klient/k8s/resources"
 )
 
 func main() {
